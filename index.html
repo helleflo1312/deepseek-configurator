@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DeepSeek-R1 Models - dSolutions.at</title>
+  <meta name="description" content="DeepSeek-R1 Models and Hardware Requirements" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* ========== DARK MODE DESIGN ========== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;     
+      color: #f3f3f3;          
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      background: #1f1f1f;
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      color: #cccccc;
+    }
+    .lang-toggle {
+      margin: 10px 0;
+      cursor: pointer;
+      background: #2c2c2c;
+      color: #f0f0f0;
+      border: 1px solid #444;
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+    .lang-toggle:hover {
+      background: #3a3a3a;
+    }
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 0 auto 50px auto;
+      text-align: center;
+    }
+
+    .hint-box {
+      background: #292929;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 0 auto 30px;
+      max-width: 800px;
+      text-align: left;
+      border: 1px solid #333;
+    }
+    .hint-box h2 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      color: #80c0ff;
+    }
+    .hint-box p {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #cccccc;
+      line-height: 1.4;
+    }
+    .hint-box code {
+      background: #1f1f1f;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #ccc;
+      margin: 0 2px;
+    }
+
+    .hardware-input {
+      margin: 30px 0 40px 0;
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #292929;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    .hardware-input h3 {
+      margin-bottom: 15px;
+      color: #80c0ff;
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    .form-row label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #f3f3f3;
+    }
+    .form-row select,
+    .form-row input {
+      padding: 8px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background: #2a2a2a;
+      color: #f3f3f3;
+    }
+    .form-row select:focus,
+    .form-row input:focus {
+      outline: none;
+      border-color: #80c0ff;
+    }
+    .vram-info {
+      margin-top: 5px;
+      font-size: 0.85rem;
+      color: #cccccc;
+    }
+    .recommend-btn {
+      margin-top: 10px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .recommend-btn:hover {
+      background: #2980b9;
+    }
+    .recommendation-result {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+      color: #f0f0f0;
+      white-space: pre-line; /* Damit Zeilenumbrüche in Texten korrekt angezeigt werden */
+    }
+
+    .slider-section {
+      margin: 40px 0;
+    }
+    .slider-label {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: inline-block;
+      color: #f3f3f3;
+    }
+    #modelSlider {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 10px;
+    }
+    #modelSlider::-webkit-slider-thumb {
+      background: #80c0ff;
+      cursor: pointer;
+    }
+    #modelSlider::-webkit-slider-runnable-track {
+      background: #404040;
+    }
+    .model-info {
+      margin-top: 30px;
+    }
+    .model-info h2 {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    .model-description {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #cccccc;
+      font-size: 0.95rem;
+    }
+
+    .specs {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 30px;
+      align-items: center;
+    }
+    .specs-box {
+      background: #1f1f1f;
+      border: 1px solid #292929;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      max-width: 500px;
+      width: 100%;
+      text-align: left;
+    }
+    .specs-box h3 {
+      color: #80c0ff;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    .specs-list {
+      list-style: none;
+      color: #f3f3f3;
+      font-size: 0.9rem;
+    }
+    .specs-list li {
+      margin: 5px 0;
+    }
+    .specs-list strong {
+      color: #ffffff;
+    }
+
+    footer {
+      margin-top: auto;
+      background: #1f1f1f;
+      border-top: 1px solid #292929;
+      padding: 20px;
+      width: 100%;
+      text-align: center;
+    }
+    footer p {
+      font-size: 0.85rem;
+      color: #999;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="title">DeepSeek-R1 Models & Hardware Configurator</h1>
+    <p id="subtitle">
+      Discover approximate hardware requirements for various DeepSeek-R1 model variants, and find out which one might fit your setup.
+    </p>
+    <button class="lang-toggle" id="langToggle">Switch to German</button>
+  </header>
+
+  <div class="container">
+    
+    <!-- Hinweis-Box zur Ermittlung -->
+    <div class="hint-box">
+      <h2 id="hintTitle">How to find CPU Cores, VRAM & RAM?</h2>
+      <p id="hintCPUCores">
+        CPU Cores: On Windows, open <code>Task Manager</code> → Performance → CPU.
+        On Linux, <code>lscpu</code>. 
+        If unsure, count your logical cores.
+      </p>
+      <p id="hintVRAM">
+        GPU VRAM: Use the dropdown below (we have some known GPUs).
+        Or check <code>dxdiag</code> (Win) / <code>nvidia-smi</code> (Linux).
+      </p>
+      <p id="hintRAM">
+        System RAM: On Windows, right-click <em>This PC</em> → Properties.
+        On Linux, <code>free -h</code>.
+        On macOS, <em>About this Mac</em>.
+      </p>
+    </div>
+
+    <!-- Formular für Hardwareangaben -->
+    <div class="hardware-input">
+      <h3 id="hardwareTitle">Check your hardware:</h3>
+
+      <!-- GPU-Auswahl -->
+      <div class="form-row">
+        <label id="labelGPU" for="gpuSelect">Select your GPU:</label>
+        <select id="gpuSelect"></select>
+        <div class="vram-info" id="vramInfo">GPU VRAM: - GB</div>
+      </div>
+
+      <!-- RAM-Eingabe -->
+      <div class="form-row">
+        <label id="labelRAM" for="ramInput">System RAM (GB):</label>
+        <input type="number" id="ramInput" placeholder="e.g. 16" />
+      </div>
+
+      <!-- CPU-Kerne-Eingabe -->
+      <div class="form-row">
+        <label id="labelCPU" for="cpuInput">CPU Cores:</label>
+        <input type="number" id="cpuInput" placeholder="e.g. 8" />
+      </div>
+
+      <!-- Empfehlungs-Button -->
+      <button class="recommend-btn" id="recommendButton">Recommend Model</button>
+      <div class="recommendation-result" id="recommendationResult"></div>
+    </div>
+
+    <!-- Slider-Bereich (Modellauswahl) -->
+    <section class="slider-section">
+      <span class="slider-label" id="sliderLabel">Select a DeepSeek-R1 Model:</span><br/>
+      <input type="range" id="modelSlider" min="0" max="6" step="1" value="0" />
+
+      <!-- Modell-Informationen -->
+      <div class="model-info">
+        <h2 id="modelName">[Model Name]</h2>
+        <p class="model-description" id="modelDescription"></p>
+      </div>
+
+      <!-- Hardware-Spezifikationen für gewähltes Modell -->
+      <div class="specs" id="specsArea">
+        <!-- Dynamisch via JavaScript -->
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p id="footerCopy">© 2025 dSolutions.at. All information without guarantee. Subject to change.</p>
+    <p id="footerDisclaimer">These specs are approximate and may vary significantly depending on quantization and optimization.</p>
+  </footer>
+
+  <script>
+    /************************************************************
+     * GPU-Liste (Beispiel) mit VRAM-Werten in GB
+     ************************************************************/
+    const knownGPUs = [
+      { name: "NVIDIA RTX 2060 (6GB)",  vram: 6 },
+      { name: "NVIDIA RTX 3060 (12GB)", vram: 12 },
+      { name: "NVIDIA RTX 3070 (8GB)",  vram: 8 },
+      { name: "NVIDIA RTX 3080 (10GB)", vram: 10 },
+      { name: "NVIDIA RTX 3080 (12GB)", vram: 12 },
+      { name: "NVIDIA RTX 3090 (24GB)", vram: 24 },
+      { name: "NVIDIA RTX 4090 (24GB)", vram: 24 },
+      { name: "NVIDIA A100 (40GB)",     vram: 40 },
+      { name: "NVIDIA A100 (80GB)",     vram: 80 },
+      { name: "NVIDIA H100 (80GB)",     vram: 80 }
+    ];
+
+    /************************************************************
+     * Sprachdaten (englisch & deutsch)
+     ************************************************************/
+    const textData = {
+      en: {
+        title: "DeepSeek-R1 Models & Hardware Configurator",
+        subtitle: "Discover approximate hardware requirements for various DeepSeek-R1 model variants, and find out which one might fit your setup.",
+        sliderLabel: "Select a DeepSeek-R1 Model:",
+        hardwareTitle: "Check your hardware:",
+        labelGPU: "Select your GPU:",
+        labelRAM: "System RAM (GB):",
+        labelCPU: "CPU Cores:",
+        recommendButton: "Recommend Model",
+        footerCopy: "© 2025 dSolutions.at. All information without guarantee. Subject to change.",
+        footerDisclaimer: "These specs are approximate and may vary significantly depending on quantization and optimization.",
+        langToggle: "Switch to German",
+
+        hintTitle: "How to find CPU Cores, VRAM & RAM?",
+        hintCPUCores: "CPU Cores: On Windows, open <code>Task Manager</code> → Performance → CPU. On Linux, <code>lscpu</code>.",
+        hintVRAM: "GPU VRAM: Use the dropdown or check <code>dxdiag</code> / <code>nvidia-smi</code>.",
+        hintRAM: "System RAM: Windows: 'This PC' → Properties; Linux: <code>free -h</code>; macOS: 'About this Mac'.",
+
+        models: [
+          {
+            name: "DeepSeek-R1 Distill Qwen (1.5B)",
+            description: "Lightweight (~1.5B). Good for basic tasks.",
+            min: {
+              vram: "~1-2 GB (4-bit)",
+              ram: "≥ 8 GB",
+              cpu: "4 cores",
+              gpu: "RTX 2060"
+            },
+            best: {
+              vram: "~3 GB (FP16)",
+              ram: "16 GB",
+              cpu: "8 cores",
+              gpu: "RTX 3060 or better"
+            },
+            max: {
+              vram: "Multi-GPU not needed",
+              ram: "32 GB",
+              cpu: "Any modern CPU",
+              gpu: "-"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (7B)",
+            description: "Around 7B. Balanced performance & resources.",
+            min: {
+              vram: "~4 GB (4-bit)",
+              ram: "16 GB",
+              cpu: "6-8 cores",
+              gpu: "RTX 3060"
+            },
+            best: {
+              vram: "~8-10 GB (FP16)",
+              ram: "32 GB",
+              cpu: "8+ cores",
+              gpu: "RTX 3070 / 3080"
+            },
+            max: {
+              vram: "Up to 16 GB no quant.",
+              ram: "64 GB",
+              cpu: "High-end CPU",
+              gpu: "Multi-GPU optional"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Llama (8B)",
+            description: "8B for moderately complex tasks.",
+            min: {
+              vram: "~4 GB (4-bit)",
+              ram: "16 GB",
+              cpu: "6-8 cores",
+              gpu: "RTX 3060 or sim."
+            },
+            best: {
+              vram: "~8-12 GB (FP16)",
+              ram: "32 GB",
+              cpu: "8-12 cores",
+              gpu: "RTX 3080 or better"
+            },
+            max: {
+              vram: "Multi-GPU for large batches",
+              ram: "64 GB",
+              cpu: "High-end CPU",
+              gpu: "2× RTX 3090"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (14B)",
+            description: "Approx. 14B. Stronger reasoning, higher VRAM.",
+            min: {
+              vram: "~8 GB (4-bit)",
+              ram: "32 GB",
+              cpu: "8 cores",
+              gpu: "RTX 3080 10GB"
+            },
+            best: {
+              vram: "~16 GB (FP16)",
+              ram: "32-64 GB",
+              cpu: "Ryzen 9 / i9",
+              gpu: "RTX 4080 or 4090"
+            },
+            max: {
+              vram: "Scales with multi-GPU",
+              ram: "64+ GB",
+              cpu: "High-end WS",
+              gpu: "2× 4090 or A100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (32B)",
+            description: "32B for more complex tasks, big VRAM demands.",
+            min: {
+              vram: "~16 GB (4-bit)",
+              ram: "64 GB",
+              cpu: "8+ cores",
+              gpu: "RTX 4090 recommended"
+            },
+            best: {
+              vram: "~32 GB (FP16)",
+              ram: "64-128 GB",
+              cpu: "High-end or dual CPU",
+              gpu: "A100 40GB+"
+            },
+            max: {
+              vram: "Multi-GPU bridging",
+              ram: "128+ GB",
+              cpu: "Dual Xeon",
+              gpu: "2-4× A100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Llama (70B)",
+            description: "70B for advanced research & robust reasoning.",
+            min: {
+              vram: "~32 GB (4-bit)",
+              ram: "64-128 GB",
+              cpu: "12+ cores",
+              gpu: "2× 4090 or 1× A100 80GB"
+            },
+            best: {
+              vram: "~64 GB (FP16)",
+              ram: "128 GB",
+              cpu: "Dual EPYC",
+              gpu: "2× A100 80GB"
+            },
+            max: {
+              vram: "HPC multi-GPU",
+              ram: "256+ GB",
+              cpu: "Server cluster",
+              gpu: "4-8× H100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 (671B)",
+            description: "Massive 671B, extremely resource-heavy.",
+            min: {
+              vram: "~350+ GB (4-bit)",
+              ram: "512+ GB",
+              cpu: "16+ cores HPC",
+              gpu: "8× A100 80GB"
+            },
+            best: {
+              vram: "~1.3 TB (FP16)",
+              ram: "1-2 TB",
+              cpu: "Enterprise HPC",
+              gpu: "16× A100/H100"
+            },
+            max: {
+              vram: "Multi-TB cluster",
+              ram: "2-4 TB",
+              cpu: "Huge HPC",
+              gpu: "32+ H100"
+            }
+          }
+        ]
+      },
+
+      de: {
+        title: "DeepSeek-R1 Modelle & Hardware-Konfigurator",
+        subtitle: "Erhalte einen Überblick zu den geschätzten Anforderungen verschiedener DeepSeek-R1-Modelle und finde heraus, welches passt.",
+        sliderLabel: "Wähle ein DeepSeek-R1 Modell:",
+        hardwareTitle: "Eigene Hardware prüfen:",
+        labelGPU: "Wähle deine GPU:",
+        labelRAM: "System-RAM (GB):",
+        labelCPU: "CPU-Kerne:",
+        recommendButton: "Modell empfehlen",
+        footerCopy: "© 2025 dSolutions.at. Alle Angaben ohne Gewähr. Änderungen vorbehalten.",
+        footerDisclaimer: "Die hier angegebenen Werte sind nur Richtwerte. Durch Quantisierung & Optimierungen können sie stark variieren.",
+        langToggle: "Zur englischen Version wechseln",
+
+        hintTitle: "So findest du CPU-Kerne, VRAM & RAM:",
+        hintCPUCores: "CPU-Kerne: Windows: Task-Manager → Leistung → CPU. Linux: lscpu. Bist du unsicher, nimm logische Kerne.",
+        hintVRAM: "GPU-VRAM: Dropdown oder dxdiag (Win) / nvidia-smi (Linux).",
+        hintRAM: "System-RAM: Windows: Dieser PC → Eigenschaften; Linux: free -h; macOS: Über diesen Mac.",
+
+        models: [
+          {
+            name: "DeepSeek-R1 Distill Qwen (1.5B)",
+            description: "Sehr leicht (~1,5B). Gut für einfache Aufgaben.",
+            min: {
+              vram: "~1-2 GB (4-bit)",
+              ram: "≥ 8 GB",
+              cpu: "4 Kerne",
+              gpu: "RTX 2060"
+            },
+            best: {
+              vram: "~3 GB (FP16)",
+              ram: "16 GB",
+              cpu: "8 Kerne",
+              gpu: "RTX 3060 oder besser"
+            },
+            max: {
+              vram: "Multi-GPU unnötig",
+              ram: "32 GB",
+              cpu: "Moderne CPU",
+              gpu: "-"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (7B)",
+            description: "Ca. 7B. Ausgewogenes Verhältnis Leistung/Ressourcen.",
+            min: {
+              vram: "~4 GB (4-bit)",
+              ram: "16 GB",
+              cpu: "6-8 Kerne",
+              gpu: "RTX 3060"
+            },
+            best: {
+              vram: "~8-10 GB (FP16)",
+              ram: "32 GB",
+              cpu: "8+ Kerne",
+              gpu: "RTX 3070 / 3080"
+            },
+            max: {
+              vram: "Bis zu 16 GB ohne Quant.",
+              ram: "64 GB",
+              cpu: "High-End CPU",
+              gpu: "Multi-GPU optional"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Llama (8B)",
+            description: "8B für mittlere Komplexität.",
+            min: {
+              vram: "~4 GB (4-bit)",
+              ram: "16 GB",
+              cpu: "6-8 Kerne",
+              gpu: "RTX 3060 o.ä."
+            },
+            best: {
+              vram: "~8-12 GB (FP16)",
+              ram: "32 GB",
+              cpu: "8-12 Kerne",
+              gpu: "RTX 3080 o. besser"
+            },
+            max: {
+              vram: "Multi-GPU für große Batches",
+              ram: "64 GB",
+              cpu: "High-End CPU",
+              gpu: "2× RTX 3090"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (14B)",
+            description: "Ca. 14B. Besseres Reasoning, höherer VRAM-Bedarf.",
+            min: {
+              vram: "~8 GB (4-bit)",
+              ram: "32 GB",
+              cpu: "8 Kerne",
+              gpu: "RTX 3080 10GB"
+            },
+            best: {
+              vram: "~16 GB (FP16)",
+              ram: "32-64 GB",
+              cpu: "Ryzen 9 / i9",
+              gpu: "RTX 4080 / 4090"
+            },
+            max: {
+              vram: "Skaliert mit Multi-GPU",
+              ram: "64+ GB",
+              cpu: "High-End WS",
+              gpu: "2× 4090 / A100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Qwen (32B)",
+            description: "32B für komplexere Aufgaben, großer Speicherbedarf.",
+            min: {
+              vram: "~16 GB (4-bit)",
+              ram: "64 GB",
+              cpu: "8+ Kerne",
+              gpu: "RTX 4090 empfohlen"
+            },
+            best: {
+              vram: "~32 GB (FP16)",
+              ram: "64-128 GB",
+              cpu: "High-End oder Dual-CPU",
+              gpu: "A100 40GB+"
+            },
+            max: {
+              vram: "Multi-GPU",
+              ram: "128+ GB",
+              cpu: "Dual Xeon",
+              gpu: "2-4× A100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 Distill Llama (70B)",
+            description: "70B für fortgeschrittene Forschung, starkes Reasoning.",
+            min: {
+              vram: "~32 GB (4-bit)",
+              ram: "64-128 GB",
+              cpu: "12+ Kerne",
+              gpu: "2× 4090 o. 1× A100 80GB"
+            },
+            best: {
+              vram: "~64 GB (FP16)",
+              ram: "128 GB",
+              cpu: "Dual EPYC",
+              gpu: "2× A100 80GB"
+            },
+            max: {
+              vram: "HPC-Cluster",
+              ram: "256+ GB",
+              cpu: "Server-Cluster",
+              gpu: "4-8× H100"
+            }
+          },
+          {
+            name: "DeepSeek-R1 (671B)",
+            description: "Riesiges 671B, extrem ressourcenintensiv.",
+            min: {
+              vram: "~350+ GB (4-bit)",
+              ram: "512+ GB",
+              cpu: "16+ Kerne HPC",
+              gpu: "8× A100 80GB"
+            },
+            best: {
+              vram: "~1,3 TB (FP16)",
+              ram: "1-2 TB",
+              cpu: "Enterprise HPC",
+              gpu: "16× A100/H100"
+            },
+            max: {
+              vram: "Multi-TB Cluster",
+              ram: "2-4 TB",
+              cpu: "Große HPC-Infrastruktur",
+              gpu: "32+ H100"
+            }
+          }
+        ]
+      }
+    };
+
+    // Aktuelle Sprache
+    let currentLang = 'en';
+
+    // Referenzen auf HTML-Elemente
+    const titleEl        = document.getElementById('title');
+    const subtitleEl     = document.getElementById('subtitle');
+    const sliderLabelEl  = document.getElementById('sliderLabel');
+    const hardwareTitleEl= document.getElementById('hardwareTitle');
+    const labelGPUEl     = document.getElementById('labelGPU');
+    const labelRAMEl     = document.getElementById('labelRAM');
+    const labelCPUEl     = document.getElementById('labelCPU');
+    const recommendBtnEl = document.getElementById('recommendButton');
+    const footerCopyEl   = document.getElementById('footerCopy');
+    const footerDiscEl   = document.getElementById('footerDisclaimer');
+    const langToggleBtn  = document.getElementById('langToggle');
+
+    // Hint-Box
+    const hintTitleEl    = document.getElementById('hintTitle');
+    const hintCPUCoresEl = document.getElementById('hintCPUCores');
+    const hintVRAMEl     = document.getElementById('hintVRAM');
+    const hintRAMEl      = document.getElementById('hintRAM');
+
+    // Hardware-Form
+    const gpuSelectEl    = document.getElementById('gpuSelect');
+    const vramInfoEl     = document.getElementById('vramInfo');
+    const ramInputEl     = document.getElementById('ramInput');
+    const cpuInputEl     = document.getElementById('cpuInput');
+    const recommendationEl= document.getElementById('recommendationResult');
+
+    // Modell-Slider
+    const modelSliderEl  = document.getElementById('modelSlider');
+    const modelNameEl    = document.getElementById('modelName');
+    const modelDescEl    = document.getElementById('modelDescription');
+    const specsAreaEl    = document.getElementById('specsArea');
+
+    // Sprache wechseln
+    function toggleLanguage() {
+      currentLang = (currentLang === 'en') ? 'de' : 'en';
+      applyLanguage();
+    }
+
+    // Sprachdaten abrufen
+    function getLangData() {
+      return textData[currentLang];
+    }
+
+    // Sprache auf UI anwenden
+    function applyLanguage() {
+      const langData = getLangData();
+      titleEl.textContent        = langData.title;
+      subtitleEl.textContent     = langData.subtitle;
+      sliderLabelEl.textContent  = langData.sliderLabel;
+      hardwareTitleEl.textContent= langData.hardwareTitle;
+      labelGPUEl.textContent     = langData.labelGPU;
+      labelRAMEl.textContent     = langData.labelRAM;
+      labelCPUEl.textContent     = langData.labelCPU;
+      recommendBtnEl.textContent = langData.recommendButton;
+      footerCopyEl.textContent   = langData.footerCopy;
+      footerDiscEl.textContent   = langData.footerDisclaimer;
+      langToggleBtn.textContent  = langData.langToggle;
+
+      // Hinweistexte
+      hintTitleEl.textContent    = langData.hintTitle;
+      hintCPUCoresEl.innerHTML   = langData.hintCPUCores;
+      hintVRAMEl.innerHTML       = langData.hintVRAM;
+      hintRAMEl.innerHTML        = langData.hintRAM;
+
+      updateModelInfo();
+    }
+
+    // Modell-Infos beim Slider-Ändern
+    function updateModelInfo() {
+      const index = parseInt(modelSliderEl.value, 10);
+      const langData = getLangData();
+      const model = langData.models[index];
+      if (!model) return;
+
+      modelNameEl.textContent = model.name;
+      modelDescEl.textContent = model.description;
+
+      specsAreaEl.innerHTML = `
+        <div class="specs-box">
+          <h3>${ currentLang === 'en' ? 'Minimal:' : 'Minimal:' }</h3>
+          <ul class="specs-list">
+            <li><strong>VRAM:</strong> ${model.min.vram}</li>
+            <li><strong>RAM:</strong> ${model.min.ram}</li>
+            <li><strong>CPU:</strong> ${model.min.cpu}</li>
+            <li><strong>GPU:</strong> ${model.min.gpu}</li>
+          </ul>
+        </div>
+        <div class="specs-box">
+          <h3>${ currentLang === 'en' ? 'Best Practice:' : 'Empfohlen:' }</h3>
+          <ul class="specs-list">
+            <li><strong>VRAM:</strong> ${model.best.vram}</li>
+            <li><strong>RAM:</strong> ${model.best.ram}</li>
+            <li><strong>CPU:</strong> ${model.best.cpu}</li>
+            <li><strong>GPU:</strong> ${model.best.gpu}</li>
+          </ul>
+        </div>
+        <div class="specs-box">
+          <h3>${ currentLang === 'en' ? 'Maximum (theoretical):' : 'Maximal (theoretisch):' }</h3>
+          <ul class="specs-list">
+            <li><strong>VRAM:</strong> ${model.max.vram}</li>
+            <li><strong>RAM:</strong> ${model.max.ram}</li>
+            <li><strong>CPU:</strong> ${model.max.cpu}</li>
+            <li><strong>GPU:</strong> ${model.max.gpu}</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    // "Maximal passendes Modell" empfehlen mit CPU-Bonus-Regel
+    // VRAM & RAM sind harte Limits; CPU darf drunterliegen (-> Warnhinweis).
+    function recommendModel() {
+      const langData = getLangData();
+
+      // GPU
+      const gpuIndex = parseInt(gpuSelectEl.value, 10);
+      if (isNaN(gpuIndex) || gpuIndex < 0 || gpuIndex >= knownGPUs.length) {
+        recommendationEl.textContent = (currentLang === 'en') 
+          ? "Please select a valid GPU."
+          : "Bitte wähle eine gültige GPU.";
+        return;
+      }
+      const userVRAM = knownGPUs[gpuIndex].vram;
+
+      // RAM & CPU
+      const userRAM = parseFloat(ramInputEl.value) || 0;
+      const userCPU = parseFloat(cpuInputEl.value) || 0;
+
+      let recommendedModel = null;
+      let borderlineCPU = false; 
+      
+      // Durch die Modelle iterieren und das GRÖSSTE wählen, das noch passt
+      for (let i = 0; i < langData.models.length; i++) {
+        const model = langData.models[i];
+        const minVramGB = extractNumber(model.min.vram);
+        const minRamGB  = extractNumber(model.min.ram);
+        const minCpu    = extractNumber(model.min.cpu);
+
+        // VRAM-Check => Muss erfüllt sein
+        if (userVRAM < minVramGB) continue;
+
+        // RAM-Check => Muss erfüllt sein
+        if (userRAM < minRamGB) continue;
+
+        // CPU-Check => Darf drunterliegen, aber wir merken uns dann "borderline"
+        let isBorderline = false;
+        if (userCPU < minCpu) {
+          // CPU zu niedrig => Wir akzeptieren es, aber vermerken Performance-Warnung
+          isBorderline = true;
+        }
+
+        // Dieses Modell ist (theoretisch) lauffähig; wir nehmen es als Kandidat
+        recommendedModel = model;
+        borderlineCPU = isBorderline;
+      }
+
+      if (recommendedModel) {
+        // Ausgabe: Modell + ggf. Warnung
+        const modelName = recommendedModel.name;
+        if (borderlineCPU) {
+          if (currentLang === 'en') {
+            recommendationEl.textContent = 
+              `Recommended Model: ${modelName}\n(Your CPU is below recommended. Performance may be slow.)`;
+          } else {
+            recommendationEl.textContent = 
+              `Empfohlenes Modell: ${modelName}\n(Deine CPU liegt unter der Empfehlung. Performance kann eingeschränkt sein.)`;
+          }
+        } else {
+          recommendationEl.textContent = (currentLang === 'en')
+            ? `Recommended Model: ${modelName}`
+            : `Empfohlenes Modell: ${modelName}`;
+        }
+      } else {
+        recommendationEl.textContent = (currentLang === 'en')
+          ? "No model fits these specs. Try a smaller or more quantized variant!"
+          : "Kein Modell passt zu diesen Specs. Versuche ein kleineres oder stärker quantisiertes Modell!";
+      }
+    }
+
+    function extractNumber(str) {
+      const match = str.match(/(\d+(\.\d+)?)/);
+      return match ? parseFloat(match[1]) : 0;
+    }
+
+    // GPU-Auswahl initialisieren
+    function initGPUSelect() {
+      gpuSelectEl.innerHTML = "";
+      knownGPUs.forEach((gpu, index) => {
+        const opt = document.createElement("option");
+        opt.value = index;
+        opt.textContent = gpu.name;
+        gpuSelectEl.appendChild(opt);
+      });
+      gpuSelectEl.selectedIndex = -1;
+      vramInfoEl.textContent = "GPU VRAM: - GB";
+    }
+
+    // GPU-Wechsel => VRAM Anzeige
+    function onGPUChange() {
+      const index = parseInt(gpuSelectEl.value, 10);
+      if (!isNaN(index) && index >= 0 && index < knownGPUs.length) {
+        const vram = knownGPUs[index].vram;
+        vramInfoEl.textContent = `GPU VRAM: ${vram} GB`;
+      } else {
+        vramInfoEl.textContent = "GPU VRAM: - GB";
+      }
+    }
+
+    // Events
+    langToggleBtn.addEventListener('click', toggleLanguage);
+    modelSliderEl.addEventListener('input', updateModelInfo);
+    recommendBtnEl.addEventListener('click', recommendModel);
+    gpuSelectEl.addEventListener('change', onGPUChange);
+
+    // Init
+    initGPUSelect();
+    applyLanguage();
+  </script>
+</body>
+</html>
